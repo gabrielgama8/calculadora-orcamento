@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orçamento de Ar-Condicionado</title>
+  <style>
+    /* Resetando margens e padding */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      padding: 50px 20px;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    input[type="number"]:focus {
+      border-color: #007bff;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .resultado {
+      margin-top: 30px;
+      background-color: #e9f7ff;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+    .resultado h3 {
+      color: #007bff;
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+    .resultado p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .resultado strong {
+      font-weight: 600;
+    }
+    .acoes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .acoes button {
+      width: 48%;
+      padding: 12px;
+      font-size: 1rem;
+      background-color: #28a745;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .acoes button:hover {
+      background-color: #218838;
+    }
+    .acoes button:first-child {
+      background-color: #ffc107;
+    }
+    .acoes button:first-child:hover {
+      background-color: #e0a800;
+    }
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 2rem;
+      }
+      .container {
+        padding: 20px;
+      }
+      input[type="number"], button {
+        font-size: 1rem;
+      }
+      .acoes button {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Orçamento de Ar-Condicionado</h2>
+    <label for="metragem">Informe a metragem (m²):</label>
+    <input type="number" id="metragem" placeholder="Ex: 30">
+    <button onclick="calcularOrcamento()">Calcular</button>
+
+    <div id="resultado" class="resultado"></div>
+
+    <div class="acoes">
+      <button onclick="imprimirOrcamento()">Imprimir</button>
+    </div>
+  </div>
+
+  <script>
+    const equipamentos = [
+      { btus: 9000, equipamento: 2300, instalacao: 600 },
+      { btus: 12000, equipamento: 2700, instalacao: 700 },
+      { btus: 18000, equipamento: 3100, instalacao: 800 },
+      { btus: 24000, equipamento: 4000, instalacao: 1000 },
+      { btus: 30000, equipamento: 4800, instalacao: 2300 },
+      { btus: 48000, equipamento: 10000, instalacao: 4000 },
+      { btus: 55000, equipamento: 12000, instalacao: 4800 },
+      { btus: 60000, equipamento: 15000, instalacao: 5100 },
+    ];
+
+    function calcularOrcamento() {
+      const metragem = parseFloat(document.getElementById('metragem').value);
+      const resultadoDiv = document.getElementById('resultado');
+
+      if (isNaN(metragem) || metragem <= 0) {
+        resultadoDiv.style.display = 'block';
+        resultadoDiv.innerHTML = 'Por favor, informe uma metragem válida.';
+        return;
+      }
+
+      const necessidadeBtus = metragem * 600;
+
+      // Encontrar a máquina mais próxima
+      let equipamentoSelecionado = equipamentos.find(e => e.btus >= necessidadeBtus);
+      if (!equipamentoSelecionado) equipamentoSelecionado = equipamentos[equipamentos.length - 1];
+
+      const precoTotal = equipamentoSelecionado.equipamento + equipamentoSelecionado.instalacao;
+
+      resultadoDiv.style.display = 'block';
+      resultadoDiv.innerHTML = `
+        <h3>Orçamento Detalhado</h3>
+        <p>Metragem informada: <strong>${metragem} m²</strong></p>
+        <p>Necessidade de BTUs: <strong>${necessidadeBtus} BTUs</strong></p>
+        <p>Equipamento mais próximo selecionado: <strong>${equipamentoSelecionado.btus} BTUs</strong></p>
+        <p>Valor estimado do equipamento: <strong>R$ ${equipamentoSelecionado.equipamento.toFixed(2)}</strong></p>
+        <p>Valor estimado da instalação: <strong>R$ ${equipamentoSelecionado.instalacao.toFixed(2)}</strong></p>
+        <hr>
+        <p style="font-size: 1.4rem;">Valor total estimado: <strong>R$ ${precoTotal.toFixed(2)}</strong></p>
+      `;
+    }
+
+    function imprimirOrcamento() {
+      const resultado = document.getElementById('resultado').innerHTML;
+      const janela = window.open('', '', 'width=800,height=600');
+      janela.document.write('<html><head><title>Orçamento</title><style>body{font-family: Arial, sans-serif; padding: 40px;} h2{text-align:center;} p{font-size:16px;} hr{margin:20px 0;}</style></head><body>');
+      janela.document.write('<h2>Orçamento de Ar-Condicionado</h2>');
+      janela.document.write(resultado);
+      janela.document.write('</body></html>');
+      janela.document.close();
+      janela.print();
+    }
+  </script>
+</body>
+</html>
